@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "@gluestack-style/animation-resolver": "^1.0.4"
+    "@gluestack-style/animation-resolver": "^1.0.4",
+    "expo-location": "^19.0.7"
   }
 }

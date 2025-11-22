@@ -6,6 +6,7 @@ import { useState } from 'react';
 import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { Input, InputField } from '@/components/ui/input';
 import { FormControl, FormControlError, FormControlErrorText, FormControlLabel, FormControlLabelText } from '@/components/ui/form-control';
+import Geolocalizacao from '@/components/geolocalizacao';
 
 export default function FormularioScreen() {
     const apiCEP = 'https://viacep.com.br/ws/{CEP}/json/';
@@ -81,6 +82,16 @@ export default function FormularioScreen() {
             }
         >
 
+            <Geolocalizacao
+                onLocalizado={(info: any) => {
+                    if (info.cep) setCep(mascaraCep(info.cep));
+                    if (info.logradouro) setLogradouro(info.logradouro);
+                    if (info.bairro) setBairro(info.bairro);
+                    if (info.cidade) setCidade(info.cidade);
+                    if (info.estado) setEstado(info.estado.toUpperCase());
+                }}
+            />
+
             <FormControl isInvalid={!!erros.cep} className="mb-4">
                 <FormControlLabel>
                     <FormControlLabelText>CEP</FormControlLabelText>
@@ -129,7 +140,7 @@ export default function FormularioScreen() {
                 </FormControlLabel>
 
                 <Input>
-                    <InputField value={complemento} onChangeText={setComplemento} placeholder="Apartamento, bloco..."/>
+                    <InputField value={complemento} onChangeText={setComplemento} placeholder="Número apartamento, bloco..."/>
                 </Input>
             </FormControl>
 
@@ -139,7 +150,7 @@ export default function FormularioScreen() {
                 </FormControlLabel>
 
                 <Input>
-                    <InputField value={bairro} onChangeText={setBairro} placeholder="Seu bairro"/>
+                    <InputField value={bairro} onChangeText={setBairro} placeholder="Bairro"/>
                 </Input>
             </FormControl>
 

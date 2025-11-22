@@ -22,14 +22,9 @@ export default function HomeScreen() {
   const [senha, setSenha] = useState('');
   const [telefone, setTelefone] = useState('');
 
-  const registrar = () => {
-    setCarregando(true);
-    setExibeAlerta(false);
-
-    setTimeout(() => {
-      setCarregando(false);
-      setExibeAlerta(true);
-    }, 5000);
+  const router = require('expo-router').useRouter();
+  const irParaFormulario = () => {
+    router.push('/formulario');
   }
 
   function mascaraTelefone(valor: string): string {
@@ -116,8 +111,8 @@ export default function HomeScreen() {
         </Input>
       </FormControl>
 
-      <Button variant="solid" size="md" action="primary" onPress={registrar}>
-        <ButtonText>Registre-se</ButtonText>
+      <Button variant="solid" size="md" action="primary" onPress={irParaFormulario}>
+        <ButtonText>Continuar</ButtonText>
       </Button>
 
       {carregando && (<Spinner size="large" color="grey" />)}
