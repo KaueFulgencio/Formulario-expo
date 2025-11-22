@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@gluestack-style/animation-resolver": "^1.0.4"
+  }
+}
