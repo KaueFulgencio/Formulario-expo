@@ -87,12 +87,7 @@ export default function FormularioScreen() {
                 </FormControlLabel>
 
                 <Input>
-                    <InputField
-                        value={cep}
-                        onChangeText={aoDigitarCep}
-                        placeholder="00000-000"
-                        keyboardType="numeric"
-                    />
+                    <InputField value={cep} onChangeText={aoDigitarCep} placeholder="00000-000" keyboardType="numeric"/>
                 </Input>
 
                 {erros.cep && (
@@ -108,11 +103,7 @@ export default function FormularioScreen() {
                 </FormControlLabel>
 
                 <Input>
-                    <InputField
-                        value={logradouro}
-                        onChangeText={setLogradouro}
-                        placeholder="Nome da rua"
-                    />
+                    <InputField value={logradouro} onChangeText={setLogradouro} placeholder="Nome da rua"/>
                 </Input>
             </FormControl>
 
@@ -122,12 +113,7 @@ export default function FormularioScreen() {
                 </FormControlLabel>
 
                 <Input>
-                    <InputField
-                        value={numero}
-                        onChangeText={setNumero}
-                        placeholder="Número"
-                        keyboardType="numeric"
-                    />
+                    <InputField value={numero} onChangeText={setNumero} placeholder="Número" keyboardType="numeric"/>
                 </Input>
 
                 {erros.numero && (
@@ -143,11 +129,7 @@ export default function FormularioScreen() {
                 </FormControlLabel>
 
                 <Input>
-                    <InputField
-                        value={complemento}
-                        onChangeText={setComplemento}
-                        placeholder="Apartamento, bloco..."
-                    />
+                    <InputField value={complemento} onChangeText={setComplemento} placeholder="Apartamento, bloco..."/>
                 </Input>
             </FormControl>
 
@@ -157,11 +139,7 @@ export default function FormularioScreen() {
                 </FormControlLabel>
 
                 <Input>
-                    <InputField
-                        value={bairro}
-                        onChangeText={setBairro}
-                        placeholder="Seu bairro"
-                    />
+                    <InputField value={bairro} onChangeText={setBairro} placeholder="Seu bairro"/>
                 </Input>
             </FormControl>
 
@@ -171,11 +149,7 @@ export default function FormularioScreen() {
                 </FormControlLabel>
 
                 <Input>
-                    <InputField
-                        value={cidade}
-                        onChangeText={setCidade}
-                        placeholder="Cidade"
-                    />
+                    <InputField value={cidade} onChangeText={setCidade} placeholder="Cidade"/>
                 </Input>
             </FormControl>
 
@@ -185,13 +159,7 @@ export default function FormularioScreen() {
                 </FormControlLabel>
 
                 <Input>
-                    <InputField
-                        value={estado}
-                        onChangeText={(v) => setEstado(v.toUpperCase())}
-                        placeholder="SP, RJ, MG..."
-                        maxLength={2}
-                        autoCapitalize="characters"
-                    />
+                    <InputField value={estado} onChangeText={(v) => setEstado(v.toUpperCase())} placeholder="SP, RJ, MG..." maxLength={2} autoCapitalize="characters"/>
                 </Input>
             </FormControl>
 
