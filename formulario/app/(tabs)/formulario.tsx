@@ -1,14 +1,21 @@
-import { Image } from 'expo-image';
 import { StyleSheet } from 'react-native';
+import { Image } from 'expo-image';
+import ParallaxScrollView from '@/components/parallax-scroll-view';
+import { useResponsiveStyles } from '@/util/styles';
 
 import { useState } from 'react';
 
-import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { Input, InputField } from '@/components/ui/input';
 import { FormControl, FormControlError, FormControlErrorText, FormControlLabel, FormControlLabelText } from '@/components/ui/form-control';
 import Geolocalizacao from '@/components/geolocalizacao';
 
+import { Button, ButtonText } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
+import { Alert, AlertIcon, AlertText } from "@/components/ui/alert";
+
+
 export default function FormularioScreen() {
+    const styles = useResponsiveStyles();
     const apiCEP = 'https://viacep.com.br/ws/{CEP}/json/';
 
     const [cep, setCep] = useState('');
@@ -20,6 +27,10 @@ export default function FormularioScreen() {
     const [estado, setEstado] = useState('');
 
     const [erros, setErros] = useState({ cep: '', numero: '' });
+
+    const [carregando, setCarregando] = useState(false);
+    const [exibeAlerta, setExibeAlerta] = useState(false);
+
 
     const aoDigitarCep = async (valor: string) => {
         const cepFormatado = mascaraCep(valor);
@@ -71,17 +82,39 @@ export default function FormularioScreen() {
         }
     }
 
+    const registrar = () => {
+        if (!validar()) return;
+
+        setCarregando(true);
+        setExibeAlerta(false);
+
+        setTimeout(() => {
+            setCarregando(false);
+            setExibeAlerta(true);
+
+            setCep('');
+            setLogradouro('');
+            setNumero('');
+            setComplemento('');
+            setBairro('');
+            setCidade('');
+            setEstado('');
+
+            setTimeout(() => setExibeAlerta(false), 3000);
+        }, 3000);
+    };
+
     return (
         <ParallaxScrollView
+            headerHeight={120}
             headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
             headerImage={
                 <Image
-                    source={require('@/assets/images/partial-react-logo.png')}
-                    style={styles.reactLogo}
+                    source={require('@/assets/images/wallpaper.png')}
+                    style={{ width: '100%', height: 120, resizeMode: 'cover' }}
                 />
             }
         >
-
             <Geolocalizacao
                 onLocalizado={(info: any) => {
                     if (info.cep) setCep(mascaraCep(info.cep));
@@ -92,13 +125,13 @@ export default function FormularioScreen() {
                 }}
             />
 
-            <FormControl isInvalid={!!erros.cep} className="mb-4">
+            <FormControl isInvalid={!!erros.cep} style={styles.formControl}>
                 <FormControlLabel>
                     <FormControlLabelText>CEP</FormControlLabelText>
                 </FormControlLabel>
 
                 <Input>
-                    <InputField value={cep} onChangeText={aoDigitarCep} placeholder="00000-000" keyboardType="numeric"/>
+                    <InputField value={cep} onChangeText={aoDigitarCep} placeholder="00000-000" keyboardType="numeric" />
                 </Input>
 
                 {erros.cep && (
@@ -108,23 +141,23 @@ export default function FormularioScreen() {
                 )}
             </FormControl>
 
-            <FormControl className="mb-4">
+            <FormControl style={styles.formControl}>
                 <FormControlLabel>
                     <FormControlLabelText>Logradouro / Rua</FormControlLabelText>
                 </FormControlLabel>
 
                 <Input>
-                    <InputField value={logradouro} onChangeText={setLogradouro} placeholder="Nome da rua"/>
+                    <InputField value={logradouro} onChangeText={setLogradouro} placeholder="Nome da rua" />
                 </Input>
             </FormControl>
 
-            <FormControl isInvalid={!!erros.numero} className="mb-4">
+            <FormControl isInvalid={!!erros.numero} style={styles.formControl}>
                 <FormControlLabel>
                     <FormControlLabelText>Número</FormControlLabelText>
                 </FormControlLabel>
 
                 <Input>
-                    <InputField value={numero} onChangeText={setNumero} placeholder="Número" keyboardType="numeric"/>
+                    <InputField value={numero} onChangeText={setNumero} placeholder="Número" keyboardType="numeric" />
                 </Input>
 
                 {erros.numero && (
@@ -134,45 +167,58 @@ export default function FormularioScreen() {
                 )}
             </FormControl>
 
-            <FormControl className="mb-4">
+            <FormControl style={styles.formControl}>
                 <FormControlLabel>
                     <FormControlLabelText>Complemento (opcional)</FormControlLabelText>
                 </FormControlLabel>
 
                 <Input>
-                    <InputField value={complemento} onChangeText={setComplemento} placeholder="Número apartamento, bloco..."/>
+                    <InputField value={complemento} onChangeText={setComplemento} placeholder="Número apartamento, bloco..." />
                 </Input>
             </FormControl>
 
-            <FormControl className="mb-4">
+            <FormControl style={styles.formControl}>
                 <FormControlLabel>
                     <FormControlLabelText>Bairro</FormControlLabelText>
                 </FormControlLabel>
 
                 <Input>
-                    <InputField value={bairro} onChangeText={setBairro} placeholder="Bairro"/>
+                    <InputField value={bairro} onChangeText={setBairro} placeholder="Bairro" />
                 </Input>
             </FormControl>
 
-            <FormControl className="mb-4">
+            <FormControl style={styles.formControl}>
                 <FormControlLabel>
                     <FormControlLabelText>Cidade</FormControlLabelText>
                 </FormControlLabel>
 
                 <Input>
-                    <InputField value={cidade} onChangeText={setCidade} placeholder="Cidade"/>
+                    <InputField value={cidade} onChangeText={setCidade} placeholder="Cidade" />
                 </Input>
             </FormControl>
 
-            <FormControl className="mb-4">
+            <FormControl style={styles.formControl}>
                 <FormControlLabel>
                     <FormControlLabelText>Estado / UF</FormControlLabelText>
                 </FormControlLabel>
 
                 <Input>
-                    <InputField value={estado} onChangeText={(v) => setEstado(v.toUpperCase())} placeholder="SP, RJ, MG..." maxLength={2} autoCapitalize="characters"/>
+                    <InputField value={estado} onChangeText={(v) => setEstado(v.toUpperCase())} placeholder="SP, RJ, MG..." maxLength={2} autoCapitalize="characters" />
                 </Input>
             </FormControl>
+
+            <Button variant="solid" size="md" action="primary" onPress={registrar} isDisabled={carregando} style={styles.button}>
+                <ButtonText>{carregando ? 'Processando' : 'Registrar'}</ButtonText>
+            </Button>
+
+            {carregando && <Spinner size="large" className="mt-4" />}
+
+            {exibeAlerta && (
+                <Alert action="success" variant="solid" className="mt-4">
+                    <AlertIcon />
+                    <AlertText>Registro efetuado com sucesso</AlertText>
+                </Alert>
+            )}
 
         </ParallaxScrollView>
     );
