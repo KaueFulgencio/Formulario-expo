@@ -1,15 +1,15 @@
 import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
+
+import { useState } from 'react';
 
 import ParallaxScrollView from '@/components/parallax-scroll-view';
-
 import { Button, ButtonText } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { Alert, AlertIcon, AlertText } from '@/components/ui/alert';
-
-import { use, useState } from 'react';
-import { FormControl, FormControlError, FormControlErrorText, FormControlLabel, FormControlLabelText } from '@/components/ui/form-control';
 import { Input, InputField } from '@/components/ui/input';
+import { FormControl, FormControlError, FormControlErrorText, FormControlLabel, FormControlLabelText } from '@/components/ui/form-control';
+
 
 export default function HomeScreen() {
   const [carregando, setCarregando] = useState(false);
