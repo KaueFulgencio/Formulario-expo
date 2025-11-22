@@ -8,10 +8,19 @@ import { Spinner } from '@/components/ui/spinner';
 import { Alert, AlertIcon, AlertText } from '@/components/ui/alert';
 
 import { use, useState } from 'react';
+import { FormControl, FormControlError, FormControlErrorText, FormControlLabel, FormControlLabelText } from '@/components/ui/form-control';
+import { Input, InputField } from '@/components/ui/input';
 
 export default function HomeScreen() {
   const [carregando, setCarregando] = useState(false);
   const [exibeAlerta, setExibeAlerta] = useState(false);
+
+  const [erros, setErros] = useState({ nome: '', email: '', senha: '' });
+
+  const [nome, setNome] = useState('');
+  const [email, setEmail] = useState('');
+  const [senha, setSenha] = useState('');
+  const [telefone, setTelefone] = useState('');
 
   const registrar = () => {
     setCarregando(true);
@@ -23,6 +32,16 @@ export default function HomeScreen() {
     }, 5000);
   }
 
+  function mascaraTelefone(valor: string): string {
+    const numero = valor.replace(/\D/g, '');
+    if (numero.length === 11) {
+      return numero.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3'); // Celular
+    } else if (numero.length === 10) {
+      return numero.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3'); // Fixo
+    } else {
+      return numero;
+    }
+  }
 
   return (
     <ParallaxScrollView
@@ -33,6 +52,70 @@ export default function HomeScreen() {
           style={styles.reactLogo}
         />
       }>
+
+      <FormControl isInvalid={!!erros.nome} className="mb-4">
+        <FormControlLabel>
+          <FormControlLabelText>Nome Completo</FormControlLabelText>
+        </FormControlLabel>
+
+        <Input>
+          <InputField value={nome} onChangeText={setNome} placeholder="Seu nome" />
+        </Input>
+
+        {erros.nome && (
+          <FormControlError>
+            <FormControlErrorText>{erros.nome}</FormControlErrorText>
+          </FormControlError>
+        )}
+      </FormControl>
+
+      <FormControl isInvalid={!!erros.email} className="mb-4">
+        <FormControlLabel>
+          <FormControlLabelText>Email</FormControlLabelText>
+        </FormControlLabel>
+
+        <Input>
+          <InputField value={email} onChangeText={setEmail} placeholder='email12345@exemplo.com' keyboardType="email-address" />
+        </Input>
+
+        {erros.email && (
+          <FormControlError>
+            <FormControlErrorText>{erros.email}</FormControlErrorText>
+          </FormControlError>
+        )}
+      </FormControl>
+
+      <FormControl isInvalid={!!erros.senha} className="mb-4">
+        <FormControlLabel>
+          <FormControlLabelText>Senha</FormControlLabelText>
+        </FormControlLabel>
+
+        <Input>
+          <InputField value={senha} onChangeText={setSenha} placeholder="Sua senha" secureTextEntry />
+        </Input>
+
+        {erros.senha && (
+          <FormControlError>
+            <FormControlErrorText>{erros.senha}</FormControlErrorText>
+          </FormControlError>
+        )}
+      </FormControl>
+
+      <FormControl className="mb-4">
+        <FormControlLabel>
+          <FormControlLabelText>Telefone (opcional)</FormControlLabelText>
+        </FormControlLabel>
+
+        <Input>
+          <InputField
+            value={telefone}
+            onChangeText={(v) => setTelefone(mascaraTelefone(v))}
+            placeholder="telefone ou celular"
+            keyboardType="phone-pad"
+          />
+        </Input>
+      </FormControl>
+
       <Button variant="solid" size="md" action="primary" onPress={registrar}>
         <ButtonText>Registre-se</ButtonText>
       </Button>
@@ -40,7 +123,7 @@ export default function HomeScreen() {
       {carregando && (<Spinner size="large" color="grey" />)}
 
       {exibeAlerta && (<Alert action="muted" variant="outline">
-        <AlertIcon/>
+        <AlertIcon />
         <AlertText>Registro efetuado com sucesso</AlertText>
       </Alert>)}
 
