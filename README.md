@@ -18,6 +18,16 @@ O aplicativo apresenta um formulário dividido em etapas, onde o usuário inform
 A geolocalização foi implementada com tratamentos distintos entre mobile e web, considerando as diferenças de suporte entre bibliotecas e APIs
 
 ## Instruções de Instalação
+Baixe o Node
+https://nodejs.org/
+
+Instale o Expo Cli
+npm install -g expo-cli
+
+Para rodar no Android Instale:
+Android Studio
+Configurar SDK
+Habilitar USB Debugging (opcional, se quiser testar no celular físico)
 
 Clone o repositório:
 git clone https://github.com/KaueMFulgencio/Formulario-expo.git
