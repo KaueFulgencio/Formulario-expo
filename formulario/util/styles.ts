@@ -17,15 +17,29 @@ export function useResponsiveStyles() {
       maxWidth: isDesktop ? 500 : '100%',
       width: '100%',
       alignSelf: 'center',
+
+      ...(isDesktop && {
+        maxHeight: 600,
+        justifyContent: 'center'
+      })
     },
     formControl: {
       marginBottom: isMobile ? 16 : 20,
     },
     button: {
-      marginTop: isMobile ? 8 : 16,
-      width: isMobile ? '100%' : 'auto',
-      alignSelf: isMobile ? 'stretch' : 'flex-start',
-      minWidth: isMobile ? '100%' : 200,
+      width: isMobile ? '48%' : '48%',
+      minWidth: 120,
+      flexGrow: 1,
+      flexShrink: 1,
+    },
+    buttonRow: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 12,
+      marginTop: 20,
+      width: '100%',
+      justifyContent: 'space-between',
+      alignItems: 'stretch',
     },
     inputField: {
       fontSize: isMobile ? 14 : 16,

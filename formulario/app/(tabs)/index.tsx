@@ -3,11 +3,13 @@ import { useState } from 'react';
 import { Image } from 'expo-image';
 
 import { Button, ButtonText } from '@/components/ui/button';
-import { Input, InputField } from '@/components/ui/input';
+import { Input, InputField, InputIcon, InputSlot } from '@/components/ui/input';
 import { FormControl, FormControlError, FormControlErrorText, FormControlLabel, FormControlLabelText } from '@/components/ui/form-control';
 import { Spinner } from '@/components/ui/spinner';
 import { Alert, AlertText, AlertIcon } from '@/components/ui/alert';
 import ParallaxScrollView from '@/components/parallax-scroll-view';
+
+import { EyeOff, Eye } from "lucide-react-native";
 
 export default function HomeScreen() {
   const styles = useResponsiveStyles();
@@ -17,21 +19,27 @@ export default function HomeScreen() {
   const [senha, setSenha] = useState('');
   const [telefone, setTelefone] = useState('');
 
-  const [erros, setErros] = useState({ nome: '', email: '', senha: '' });
+  const [erros, setErros] = useState({ nome: '', email: '', senha: '', telefone: '' });
 
   const [carregando, setCarregando] = useState(false);
   const [exibeAlerta, setExibeAlerta] = useState(false);
+  const [exibeSenha, setExibeSenha] = useState(false);
 
   const router = require('expo-router').useRouter();
 
   function mascaraTelefone(valor: string): string {
     const numero = valor.replace(/\D/g, '');
-    if (numero.length === 11) {
+    if (numero.length > 11) {
+      return numero.slice(0, 11).replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+    } else if (numero.length === 11) {
       return numero.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
     } else if (numero.length === 10) {
       return numero.replace(/(\d{2})(\d{4})(\d{4})/, '($1) $2-$3');
+    } else if (numero.length > 2) {
+      return numero.replace(/(\d{2})(\d{0,5})/, '($1) $2');
+    } else {
+      return numero;
     }
-    return numero;
   }
 
   const validar = () => {
@@ -48,31 +56,31 @@ export default function HomeScreen() {
     if (!senha.trim() || senha.length < 6)
       novoErro.senha = 'A senha deve ter no mínimo 6 caracteres.';
 
+    if (telefone.trim()) {
+      const somenteNumeros = telefone.replace(/\D/g, '');
+      const regexTelefone = /^(\d{10}|\d{11})$/;
+
+      if (!regexTelefone.test(somenteNumeros)) {
+        novoErro.telefone = 'Telefone inválido. Use um número brasileiro válido.';
+      }
+    }
     setErros(novoErro);
     return Object.keys(novoErro).length === 0;
   };
 
   const aoContinuar = () => {
     if (!validar()) return;
-
     setCarregando(true);
-
     setTimeout(() => {
       setCarregando(false);
       setExibeAlerta(true);
-
       setTimeout(() => {
         setExibeAlerta(false);
-
-        router.push({
-          pathname: '/formulario',
-          params: {
-            nome,
-            email,
-            senha,
-            telefone
-          }
-        });
+        setNome('');
+        setEmail('');
+        setSenha('');
+        setTelefone('');
+        router.push('/formulario');
       }, 1500);
     }, 1500);
   };
@@ -135,9 +143,13 @@ export default function HomeScreen() {
           <InputField
             value={senha}
             onChangeText={setSenha}
-            placeholder="Sua senha"
-            secureTextEntry
+            placeholder="Senha"
+            secureTextEntry={!exibeSenha}
           />
+
+          <InputSlot onPress={() => setExibeSenha(!exibeSenha)}>
+            <InputIcon as={exibeSenha ? EyeOff : Eye}></InputIcon>
+          </InputSlot>
         </Input>
 
         {erros.senha && (
@@ -147,19 +159,20 @@ export default function HomeScreen() {
         )}
       </FormControl>
 
-      <FormControl style={styles.formControl}>
+      <FormControl isInvalid={!!erros.telefone} style={styles.formControl}>
         <FormControlLabel>
           <FormControlLabelText>Telefone (opcional)</FormControlLabelText>
         </FormControlLabel>
 
         <Input>
-          <InputField
-            value={telefone}
-            onChangeText={(v) => setTelefone(mascaraTelefone(v))}
-            placeholder="telefone ou celular"
-            keyboardType="phone-pad"
-          />
+          <InputField value={telefone} onChangeText={(v) => setTelefone(mascaraTelefone(v))} placeholder="telefone ou celular" keyboardType="phone-pad" />
         </Input>
+
+        {erros.telefone && (
+          <FormControlError>
+            <FormControlErrorText>{erros.telefone}</FormControlErrorText>
+          </FormControlError>
+        )}
       </FormControl>
 
       <Button variant="solid" size="md" action="primary" onPress={aoContinuar} style={styles.button}>
@@ -171,7 +184,7 @@ export default function HomeScreen() {
       {exibeAlerta && (
         <Alert action="success" variant="solid" className="mt-4">
           <AlertIcon />
-          <AlertText>Registro validado com sucesso!</AlertText>
+          <AlertText>Validado</AlertText>
         </Alert>
       )}
 

@@ -1,45 +1,41 @@
-import { useState } from "react";
-import { Text, TouchableHighlight, View } from "react-native";
-import * as Location from "expo-location";
+import React from "react";
+import { ActivityIndicator, Text, TouchableHighlight, View } from "react-native";
+import { useGeolocation } from '@/hooks/use-geolocation';
 
-export default function Geolocalizacao({ onLocalizado }: any) {
-    const [latitude, setLatitude] = useState<number | null>(null);
-    const [longitude, setLongitude] = useState<number | null>(null);
 
-    const pegarLocalizacao = async () => {
-        const { status } = await Location.requestForegroundPermissionsAsync();
-        if (status !== "granted") {
-            alert("Permissao negada!");
-            return;
+export default function Geolocalizacao({ onLocalizado }: { onLocalizado?: (info: any) => void }) {
+    const { localizacao, endereco, erro, carregando, getlocalizacao } = useGeolocation();
+
+    React.useEffect(() => {
+        if (localizacao.latitude && localizacao.longitude && typeof onLocalizado === 'function') {
+            if (endereco) {
+                onLocalizado({
+                    cep: endereco.postcode || '',
+                    logradouro: endereco.road || endereco.street || '',
+                    bairro: endereco.suburb || endereco.neighbourhood || '',
+                    cidade: endereco.city || endereco.town || endereco.village || '',
+                    estado: endereco.state || endereco.region || '',
+                });
+            } else {
+                onLocalizado({ latitude: localizacao.latitude, longitude: localizacao.longitude });
+            }
         }
-
-        const pos = await Location.getCurrentPositionAsync({});
-        setLatitude(pos.coords.latitude);
-        setLongitude(pos.coords.longitude);
-
-        const endereco = await Location.reverseGeocodeAsync({
-            latitude: pos.coords.latitude,
-            longitude: pos.coords.longitude
-        });
-
-        if (endereco && endereco.length > 0) {
-            const info = endereco[0];
-
-            onLocalizado({
-                cep: info.postalCode || "",
-                logradouro: info.street || "",
-                bairro: info.district || "",
-                cidade: info.city || "",
-                estado: info.region || ""
-            });
-        }
-    };
+    }, [localizacao, endereco, onLocalizado]);
 
     return (
         <View className="mb-6 bg-white p-4 rounded-2xl">
-            <TouchableHighlight onPress={pegarLocalizacao}>
+            <TouchableHighlight onPress={getlocalizacao}>
                 <Text>Localização em tempo real</Text>
             </TouchableHighlight>
+
+            {carregando && (
+                <View style={{ marginTop: 10, flexDirection: "row", alignItems: "center" }}>
+                    <ActivityIndicator size="small" color="#000" />
+                    <Text style={{ marginLeft: 8 }}>Buscando sua localização</Text>
+                </View>
+            )}
+
+            {erro && <Text style={{ color: 'red' }}>{erro}</Text>}
         </View>
 
     );
